@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import axiosInstance from '../../Helpers/axiosInstance';
 
 // Create appointment
 export const createAppointment = createAsyncThunk(
-  'appointments/create',
+  '/appointments/create',
   async (appointmentData) => {
-    const promise = axios.post('/api/appointments', appointmentData);
+    const promise = axiosInstance.post('/appointment/create-appointment', appointmentData);
     
     toast.promise(promise, {
       loading: 'Creating appointment...',
@@ -21,9 +22,9 @@ export const createAppointment = createAsyncThunk(
 
 // Get my appointments
 export const getMyAppointments = createAsyncThunk(
-  'appointments/getMyAppointments',
+  '/appointments/getMyAppointments',
   async () => {
-    const promise = axios.get('/api/appointments/my-appointments');
+    const promise = axiosInstance.get('/appointment/my-appointments');
     
     toast.promise(promise, {
       loading: 'Loading appointments...',
@@ -31,16 +32,17 @@ export const getMyAppointments = createAsyncThunk(
       error: 'Failed to load appointments'
     });
 
-    const response = await promise;
-    return response.data;
+    const response = await promise
+    console.log(response);
+    return response.data.appointments;
   }
 );
 
 // Delete appointment
 export const deleteAppointment = createAsyncThunk(
-  'appointments/delete',
+  '/appointments/delete/',
   async (appointmentId) => {
-    const promise = axios.delete(`/api/appointments/${appointmentId}`);
+    const promise = axiosInstance.delete(`/delete-appointment/${appointmentId}`);
     
     toast.promise(promise, {
       loading: 'Deleting appointment...',
@@ -81,7 +83,7 @@ const appointmentSlice = createSlice({
       })
       .addCase(getMyAppointments.fulfilled, (state, action) => {
         state.loading = false;
-        state.appointments = action.payload;
+        state.appointments = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(getMyAppointments.rejected, (state, action) => {
         state.loading = false;
