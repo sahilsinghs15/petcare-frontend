@@ -45,11 +45,15 @@ const HomePage = () => {
 				<div className='text-xl font-bold cursor-pointer'>PetCare</div>
 				<div className='hidden md:flex items-center space-x-6'>
 					<Link 
-            to='/appointments'
-            className='cursor-pointer hover:text-gray-300'>
+						to='/appointments'
+						className='cursor-pointer hover:text-gray-300'>
 						Appointments
 					</Link>
-					<span className='cursor-pointer hover:text-gray-300'>Services</span>
+					<Link 
+						to='/products'
+						className='cursor-pointer hover:text-gray-300'>
+						Products
+					</Link>
 					<span className='cursor-pointer hover:text-gray-300'>Prices</span>
 					<span className='cursor-pointer hover:text-gray-300'>About</span>
 					<span className='cursor-pointer hover:text-gray-300'>Contact</span>

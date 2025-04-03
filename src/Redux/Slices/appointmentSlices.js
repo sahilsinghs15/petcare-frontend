@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import axiosInstance from '../../Helpers/axiosInstance';
 
@@ -39,15 +38,15 @@ export const getMyAppointments = createAsyncThunk(
 );
 
 // Delete appointment
-export const deleteAppointment = createAsyncThunk(
-  '/appointments/delete/',
+export const cancelAppointment = createAsyncThunk(
+  '/appointments/cancel/',
   async (appointmentId) => {
-    const promise = axiosInstance.delete(`/delete-appointment/${appointmentId}`);
+    const promise = axiosInstance.patch(`/appointment/cancel-appointment/${appointmentId}`);
     
     toast.promise(promise, {
-      loading: 'Deleting appointment...',
-      success: 'Appointment deleted successfully!',
-      error: 'Failed to delete appointment'
+      loading: 'Cancelling appointment...',
+      success: 'Appointment cancelled successfully!',
+      error: 'Failed to cancel appointment'
     });
 
     await promise;
@@ -90,9 +89,9 @@ const appointmentSlice = createSlice({
         state.error = action.error.message;
       })
       // Delete appointment
-      .addCase(deleteAppointment.fulfilled, (state, action) => {
+      .addCase(cancelAppointment.fulfilled, (state, action) => {
         state.appointments = state.appointments.filter(
-          (appointment) => appointment._id !== action.payload
+          (appointment) => appointment.id !== action.payload
         );
       });
   },

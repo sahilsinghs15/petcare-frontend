@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMyAppointments, deleteAppointment } from '../Redux/Slices/appointmentSlices';
+import { getMyAppointments, cancelAppointment } from '../Redux/Slices/appointmentSlices';
 import { FaTrash, FaUserClock, FaCheck } from 'react-icons/fa';
 
 function AppointmentsPage() {
@@ -10,11 +10,11 @@ function AppointmentsPage() {
 
     useEffect(() => {
         dispatch(getMyAppointments());
-    }, [dispatch]);
+    },[dispatch]);
 
     const handleCancelAppointment = (appointmentId) => {
         if (window.confirm('Are you sure you want to cancel this appointment?')) {
-            dispatch(deleteAppointment(appointmentId));
+            dispatch(cancelAppointment(appointmentId));
         }
     };
 
@@ -35,11 +35,14 @@ function AppointmentsPage() {
                         <div key={appointment._id} className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h2 className="text-xl font-semibold">{appointment.petOwner}</h2>
-                                    <p className="text-gray-600">Time: {appointment.petName}</p>
+                                    <h2 className="text-xl font-semibold">Owner : {appointment.petOwner}</h2>
+                                    <p className="text-gray-600">PetName: {appointment.petName}</p>
                                     <p className="text-gray-600">Date: {new Date(appointment.appointmentDate).toLocaleDateString()}</p>
                                     <p className="text-gray-600">Time: {appointment.appointmentTime}</p>
-                                    <p className="text-gray-600">Status: {appointment.status === "Pending" ? <FaUserClock/> : <FaCheck/>}</p>
+                                    <div className='flex items-center gap-2'>
+                                        <p className="text-gray-600">Status: </p> <span className="text-gray-600">{appointment.status === "Pending" ? <FaUserClock/> : <FaCheck/>}</span>
+                                    </div>
+                                    
                                 </div>
                                 <button 
                                     onClick={() => handleCancelAppointment(appointment._id)}
