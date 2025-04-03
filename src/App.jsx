@@ -8,6 +8,7 @@ import ServicePage from "./Pages/ServicePage";
 import SearchResultPage from "./Components/SearchResultPage";
 import CartPage from "./Pages/CartPage";
 import PaymentPage from "./Pages/PaymentPage";
+import OrdersPage from "./Pages/OrdersPage";
 
 function App() {
 
@@ -22,6 +23,8 @@ function App() {
           <Route path="/products/fetchProductsByQuery" element = {<SearchResultPage/>} ></Route>
           <Route path="/cart" element={<CartPage/>}></Route>
           <Route path="/payment" element={<PaymentPage/>}></Route>
+          <Route path="/orders" element= {<OrdersPage/>}></Route>
+          
       </Routes>
       
     </>

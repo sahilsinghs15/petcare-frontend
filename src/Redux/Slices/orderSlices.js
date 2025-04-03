@@ -9,7 +9,7 @@ export const createOrder = createAsyncThunk(
     async (orderData, { rejectWithValue }) => {
         return toast.promise(
             axiosInstance.post('/order/', orderData)
-                .then(response => response.data)
+                .then(response => response.data.data)
                 .catch(error => {
                     throw rejectWithValue(error.response.data);
                 }),
@@ -27,8 +27,8 @@ export const getOrderById = createAsyncThunk(
     'orders/getById',
     async (orderId, { rejectWithValue }) => {
         return toast.promise(
-            axiosInstance.get(`/api/v1/orders/${orderId}`)
-                .then(response => response.data)
+            axiosInstance.get(`/orders/${orderId}`)
+                .then(response => response.data.data)
                 .catch(error => {
                     throw rejectWithValue(error.response.data);
                 }),
@@ -46,8 +46,8 @@ export const getUserOrders = createAsyncThunk(
     'orders/getUserOrders',
     async (_, { rejectWithValue }) => {
         return toast.promise(
-            axiosInstance.get('/api/v1/order/orders')
-                .then(response => response.data)
+            axiosInstance.get('/order/orders')
+                .then(response => response.data.data)
                 .catch(error => {
                     throw rejectWithValue(error.response.data);
                 }),
@@ -65,8 +65,8 @@ export const updateOrderStatus = createAsyncThunk(
     'orders/updateStatus',
     async ({ orderId, orderStatus }, { rejectWithValue }) => {
         return toast.promise(
-            axiosInstance.put(`/api/v1/orders/${orderId}`, { orderStatus })
-                .then(response => response.data)
+            axiosInstance.put(`/order/${orderId}`, { orderStatus })
+                .then(response => response.data.data)
                 .catch(error => {
                     throw rejectWithValue(error.response.data);
                 }),
@@ -79,20 +79,19 @@ export const updateOrderStatus = createAsyncThunk(
     }
 );
 
-// Delete Order (Admin)
-export const deleteOrder = createAsyncThunk(
-    'orders/delete',
+export const cancelOrder = createAsyncThunk(
+    'orders/cancel',
     async (orderId, { rejectWithValue }) => {
         return toast.promise(
-            axiosInstance.delete(`/api/v1/orders/${orderId}`)
-                .then(response => response.data)
+            axiosInstance.put(`/order/${orderId}/cancel`)
+                .then(response => response.data.data)
                 .catch(error => {
                     throw rejectWithValue(error.response.data);
                 }),
             {
-                loading: 'Deleting order...',
-                success: 'Order deleted successfully',
-                error: 'Failed to delete order'
+                loading: 'Cancelling order...',
+                success: 'Order Cancelled successfully',
+                error: 'Failed to Cancle order'
             }
         );
     }
@@ -103,8 +102,8 @@ export const getAllOrders = createAsyncThunk(
     'orders/getAll',
     async (_, { rejectWithValue }) => {
         return toast.promise(
-            axiosInstance.get('/api/v1/orders')
-                .then(response => response.data)
+            axiosInstance.get('/orders')
+                .then(response => response.data.data)
                 .catch(error => {
                     throw rejectWithValue(error.response.data);
                 }),
@@ -143,7 +142,7 @@ const orderSlice = createSlice({
             .addCase(createOrder.fulfilled, (state, action) => {
                 state.loading = false;
                 state.success = true;
-                state.currentOrder = action.payload.order;
+                state.currentOrder = action.payload;
             })
             .addCase(createOrder.rejected, (state, action) => {
                 state.loading = false;
@@ -156,7 +155,7 @@ const orderSlice = createSlice({
             })
             .addCase(getOrderById.fulfilled, (state, action) => {
                 state.loading = false;
-                state.currentOrder = action.payload.order;
+                state.currentOrder = action.payload;
             })
             .addCase(getOrderById.rejected, (state, action) => {
                 state.loading = false;
@@ -169,7 +168,7 @@ const orderSlice = createSlice({
             })
             .addCase(getUserOrders.fulfilled, (state, action) => {
                 state.loading = false;
-                state.orders = action.payload.orders;
+                state.orders = action.payload;
             })
             .addCase(getUserOrders.rejected, (state, action) => {
                 state.loading = false;
@@ -183,7 +182,7 @@ const orderSlice = createSlice({
             .addCase(updateOrderStatus.fulfilled, (state, action) => {
                 state.loading = false;
                 state.success = true;
-                state.currentOrder = action.payload.order;
+                state.currentOrder = action.payload;
             })
             .addCase(updateOrderStatus.rejected, (state, action) => {
                 state.loading = false;
@@ -191,15 +190,15 @@ const orderSlice = createSlice({
             })
 
             // Delete Order
-            .addCase(deleteOrder.pending, (state) => {
+            .addCase(cancelOrder.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(deleteOrder.fulfilled, (state, action) => {
+            .addCase(cancelOrder.fulfilled, (state, action) => {
                 state.loading = false;
                 state.success = true;
                 state.orders = state.orders.filter(order => order._id !== action.meta.arg);
             })
-            .addCase(deleteOrder.rejected, (state, action) => {
+            .addCase(cancelOrder.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload?.message || 'Failed to delete order';
             })
@@ -210,7 +209,7 @@ const orderSlice = createSlice({
             })
             .addCase(getAllOrders.fulfilled, (state, action) => {
                 state.loading = false;
-                state.orders = action.payload.orders;
+                state.orders = action.payload;
             })
             .addCase(getAllOrders.rejected, (state, action) => {
                 state.loading = false;
